@@ -1,0 +1,77 @@
+import pandas as pd
+path='C:\\Work\\Routing Problem\\Validation\\Test\\'
+flname='harvest3_fy18_test1MS.csv'
+df=pd.read_csv(path+flname)
+Violation_date_num=0
+Violation_hour_num=0
+Violation_RelocationTime_num=0
+Violation_hour=[]
+Workinghour=10
+ExactGap=0
+UseIdleTime=0
+
+
+
+
+j=range(len(df.field))
+
+
+for i in j:
+    Violation_hour.append(0)
+    
+Violation_RelocatingTime = [[0 for i1 in j] for i2 in j]
+Relocating_Time=[[1 for i1 in j] for i2 in j]
+        
+    
+
+for i in j:
+    if df.time[i]<df.SDT[i] or df.time[i]>df.EDT[i]:
+        Violation_date_num==Violation_date_num+1
+        
+print('Violation number for the date is: %g' % Violation_date_num)
+
+for i in j:
+    if df.SDT[i]==df.EDT[i]:
+        Violation_hour[i]==(df.EHT[i]-df.SHT[i])/Workinghour-df.harvestFracionRoute[i]
+        
+    else:
+        if df.time[i]==df.SDT[i]:
+            Violation_hour[i]==(Workinghour-df.SHT[i])/Workinghour-df.harvestFracionRoute[i]
+        else:
+            Violation_hour[i]==df.EHT[i]/Workinghour-df.harvestFracionRoute[i]
+for i in j:
+    if Violation_hour[i]>=0.0001:
+            Violation_hour_num=Violation_hour_num+1
+print('Violation number for the Hour is: %g' % Violation_hour_num)
+
+
+for i1 in j:
+    for i2 in j:
+        if df.picker[i1]==df.picker[i2]:
+            if df.field[i1] != df.field[i2]:
+                if df.STF[i1]-df.ETF[i2]>=df.STF[i2]-df.ETF[i1]:
+                    Violation_RelocatingTime[i1][i2]=df.STF[i1]-df.ETF[i2]
+                else:
+                    Violation_RelocatingTime[i1][i2]=df.STF[i2]-df.ETF[i1]
+            else:
+                Violation_RelocatingTime[i1][i2]=10000
+        else:
+            Violation_RelocatingTime[i1][i2]=10000
+
+for i1 in j:
+    for i2 in j:
+        if Violation_RelocatingTime[i1][i2]<Relocating_Time[i1][i2]:
+            Violation_RelocationTime_num=Violation_RelocationTime_num+1
+            
+for i1 in j:
+    for i2 in j:
+        if Violation_RelocatingTime[i1][i2]==Relocating_Time[i1][i2]:
+            ExactGap=ExactGap+1
+for i1 in j:
+    for i2 in j:
+        if Violation_RelocatingTime[i1][i2]==24-Workinghour:
+            UseIdleTime=UseIdleTime+1
+
+print('Violation number for the Relocation Time is: %g' % Violation_RelocationTime_num)
+print('ExactGap number for the Relocation is: %g' % ExactGap)
+print('UseIdleTime number for the Relocation is: %g' % UseIdleTime)
