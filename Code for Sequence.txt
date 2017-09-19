@@ -1,0 +1,21 @@
+import pandas as pd
+path1='C:\\Work\\Routing Problem\\Validation\\Test\\'
+flname1='Sequence.csv'
+df1=pd.read_csv(path1+flname1)
+j=len(df1.field)
+NumJ=range(j)
+Sequence_Array=[]
+for i in NumJ:
+    Sequence_Array.append(1)
+Gap_Array=[]
+for i in NumJ:
+    Gap_Array.append(1000)
+    
+for i1 in NumJ:
+    for i2 in NumJ:
+        if df1.picker[i1]==df1.picker[i2]:
+            if df1.STF[i1]>=df1.ETF[i2]:
+                Sequence_Array[i1]=Sequence_Array[i1]+1
+for i1 in NumJ:
+    if Sequence_Array[i1]!=1:
+        Gap_Array[i1]=df1.STF[i1]-df1.ETF[i1-1]
